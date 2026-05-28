@@ -1,0 +1,25 @@
+name: CI 
+on: [push, pull_request] 
+ 
+jobs: 
+  build-and-test: 
+    runs-on: ubuntu-latest 
+ 
+    steps: 
+    - uses: actions/checkout@v4 
+ 
+    - name: Start Docker Compose 
+      run: docker compose up -d 
+ 
+    - name: Check Licensing Service 
+      run: curl http://localhost:500
+ 
+    - name: Check Appointment Service 
+      run: curl http://localhost:5002 
+ 
+    - name: Check Billing Service 
+      run: curl http://localhost:5003 
+ 
+    - name: Show Docker logs 
+      run: docker compose logs 
+Add CI/CD workflow
