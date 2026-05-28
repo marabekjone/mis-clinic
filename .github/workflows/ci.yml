@@ -1,25 +1,31 @@
-name: CI 
-on: [push, pull_request] 
- 
-jobs: 
-  build-and-test: 
-    runs-on: ubuntu-latest 
- 
-    steps: 
-    - uses: actions/checkout@v4 
- 
-    - name: Start Docker Compose 
-      run: docker compose up -d 
- 
-    - name: Check Licensing Service 
-      run: curl http://localhost:500
- 
-    - name: Check Appointment Service 
-      run: curl http://localhost:5002 
- 
-    - name: Check Billing Service 
-      run: curl http://localhost:5003 
- 
-    - name: Show Docker logs 
-      run: docker compose logs 
-Add CI/CD workflow
+name: CI
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Start Docker Compose
+      run: docker compose up -d
+
+    - name: Wait for services to be ready
+      run: sleep 10
+
+    - name: Test Licensing Service
+      run: |
+        curl -f http://localhost:5001 || exit 1
+
+    - name: Test Appointment Service
+      run: |
+        curl -f http://localhost:5002 || exit 1
+
+    - name: Test Billing Service
+      run: |
+        curl -f http://localhost:5003 || exit 1
+
+    - name: Show Docker logs (if failed)
+      if: failure()
+      run: docker compose logs
