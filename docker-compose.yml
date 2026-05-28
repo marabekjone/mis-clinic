@@ -1,17 +1,20 @@
-version: '3.8' 
- 
-services: 
-  licensing: 
-    image: mcr.microsoft.com/dotnet/samples:aspnetapp 
-    ports: 
-      - "5001:80" 
- 
-  appointment: 
-    image: mcr.microsoft.com/dotnet/samples:aspnetapp 
-    ports: 
-      - "5002:80" 
- 
-  billing: 
-    image: mcr.microsoft.com/dotnet/samples:aspnetapp 
-    ports: 
-      - "5003:80" 
+version: '3.8'
+
+services:
+  licensing:
+    image: curlimages/curl:latest
+    command: ["sh", "-c", "while true; do echo 'HTTP/1.1 200 OK\n\n{\"license\":\"Active\",\"clinicId\":1}' | nc -l -p 80 -s 0.0.0.0; done"]
+    ports:
+      - "5001:80"
+
+  appointment:
+    image: curlimages/curl:latest
+    command: ["sh", "-c", "while true; do echo 'HTTP/1.1 200 OK\n\n{\"service\":\"Therapy\",\"price\":2500}' | nc -l -p 80 -s 0.0.0.0; done"]
+    ports:
+      - "5002:80"
+
+  billing:
+    image: curlimages/curl:latest
+    command: ["sh", "-c", "while true; do echo 'HTTP/1.1 200 OK\n\n{\"medicines\":[{\"name\":\"Paracetamol\",\"price\":150}],\"invoice\":{\"id\":1,\"total\":1250}}' | nc -l -p 80 -s 0.0.0.0; done"]
+    ports:
+      - "5003:80"
